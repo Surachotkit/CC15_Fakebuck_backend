@@ -1,0 +1,15 @@
+Register
+POST /auth/Register
+BODY firstName, lastName, emailOrMobile, password, confirmPassword  // emailOrMobile ต้องเขียนฟังชั่นแยกให้ออกว่าอันไหน email อันไหน mobile
+Response
+201 { accessToken: String }  // ล็อคอินเสร็จแล้วให้ทำอะไรต่อ / อัตโนมัติ / เด้งไป OTP 
+400 { message: String }
+500 { message: String }
+
+LOGIN
+POST /auth/LOGIN
+BODY emailOrMobile, password  **validate ก่อน ถ้าไม่ส่งค่ามา ให้ error ไป 
+Response
+200 { accessToken: String }  // ล็อคอินเสร็จแล้วให้ทำอะไรต่อ / อัตโนมัติ / เด้งไป OTP 
+400 { message: String }
+500 { message: String }

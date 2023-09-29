@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
       // data == value
       data: value,
     });
-    // สมัครเสร็จ login อัตโนมัติ
+    // สมัครเสร็จ login อัตโนมัติ 
     const payload = { userId: user.id };
     const accessToken = jwt.sign(
       payload,
@@ -60,7 +60,12 @@ exports.login = async (req, res, next) => {
       process.env.JWT_SECRET_KEY || "1q1w1w1we22e2ee2r33r",
       { expiresIn: process.env.JWT_EXPIRE }
     );
-    res.status(200).json({ accessToken });
+    // user คือ สิ่งที่ find มาใน table
+    // ส่งค่าไปหน้าบ้าน { accessToken, user }
+
+    // del pass ไม่ให้โชว์ใน component
+    delete user.password
+    res.status(200).json({ accessToken, user });
   } catch (err) {
     next(err);
   }

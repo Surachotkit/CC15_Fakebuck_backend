@@ -8,8 +8,17 @@ Response
 
 LOGIN
 POST /auth/LOGIN
-BODY emailOrMobile, password  **validate ก่อน ถ้าไม่ส่งค่ามา ให้ error ไป 
+BODY emailOrMobile, password  // **validate ก่อน ถ้าไม่ส่งค่ามา ให้ error ไป 
 Response
 200 { accessToken: String, user: { id: Number, firstName: String } }  // ล็อคอินเสร็จแล้วให้ทำอะไรต่อ / อัตโนมัติ / เด้งไป OTP 
 400 { message: String }
+500 { message: String }
+
+
+GET Authenticated user
+GET /auth/me
+HEADER Authorization Bearer ACCESS_TOKEN   // ACCESS_TOKEN ส่งมาจาก Header
+Response 
+200 { user: { id: Number, firstName: String } }
+401 { message: String }
 500 { message: String }

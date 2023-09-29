@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
       // data == value
       data: value,
     });
-    // สมัครเสร็จ login อัตโนมัติ 
+    // สมัครเสร็จ login อัตโนมัติ
     const payload = { userId: user.id };
     const accessToken = jwt.sign(
       payload,
@@ -42,16 +42,16 @@ exports.login = async (req, res, next) => {
     // SELECT * FROM user WHERE email = emailOrMobile OR mobile = emailOrMobile //*1condition = 1el ของ array
     const user = await prisma.user.findFirst({
       where: {
-        OR: [{ email: value.emailOrMobile }, { mobile: value.emailOrMobile }]
-      }
+        OR: [{ email: value.emailOrMobile }, { mobile: value.emailOrMobile }],
+      },
     });
-    if(!user){
-      return next(createError('invalid credential', 400))
+    if (!user) {
+      return next(createError("invalid credential", 400));
     }
     // return T or F  // ตรวจ hash
-    const isMatch = await bcrypt.compare(value.password, user.password)
-    if(!isMatch){
-      return next(createError('invalid credential', 400))
+    const isMatch = await bcrypt.compare(value.password, user.password);
+    if (!isMatch) {
+      return next(createError("invalid credential", 400));
     }
     // ถ้า T ให้ gen token  // ทุกรอบที่ล็อคอินจะ gen token และเก็บไว้ใน localstorage
     const payload = { userId: user.id };
@@ -64,9 +64,13 @@ exports.login = async (req, res, next) => {
     // ส่งค่าไปหน้าบ้าน { accessToken, user }
 
     // del pass ไม่ให้โชว์ใน component
-    delete user.password
+    delete user.password;
     res.status(200).json({ accessToken, user });
   } catch (err) {
     next(err);
   }
+};
+
+exports.getMe = (req, res, next) => {
+  res.status(200).json({ user: req.user });
 };

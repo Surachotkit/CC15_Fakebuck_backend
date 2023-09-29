@@ -9,7 +9,11 @@ const registerSchema = Joi.object({
     ]).required().strip(),
     password: Joi.string().pattern(/^[a-zA-Z0-9]{6,30}$/).trim().required(),
     confirmPassword: Joi.string().valid(Joi.ref('password')).trim().required().strip(),
-
+    // strip() ตัดอันที่ไม่จำเป็น ไม่ต้องแสดง 
+    // ถ้า mobile จริง แสดงผล  // email -> null
+    // when == if 
+    // is == true
+    // then == false --> ให้ไปแสดงผล ref 
     mobile: Joi.forbidden().when('emailOrMobile', {
         // ถ้าอยู่ใน fomat นี้ ให้ทำใน then -> ให้เอาค่ามาจาก emailOrMobile
         is: Joi.string().pattern(/^[0-9]{10}$/),
@@ -22,3 +26,10 @@ const registerSchema = Joi.object({
 })
 
 exports.registerSchema = registerSchema
+
+const loginSchema = Joi.object({
+    emailOrMobile: Joi.string().required(),
+    password: Joi.string().required()
+})
+
+exports.loginSchema = loginSchema

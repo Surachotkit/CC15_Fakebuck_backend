@@ -25,7 +25,9 @@ exports.register = async (req, res, next) => {
       process.env.JWT_SECRET_KEY || "1q1w1w1we22e2ee2r33r",
       { expiresIn: process.env.JWT_EXPIRE }
     );
-    res.status(201).json({ accessToken });
+    // ลบ key ไม่ให้โชว์ให้ user เห็น
+    delete user.password
+    res.status(201).json({ accessToken,user });
   } catch (err) {
     next(err);
   }

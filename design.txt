@@ -2,8 +2,8 @@ Register
 POST /auth/Register
 BODY firstName, lastName, emailOrMobile, password, confirmPassword  // emailOrMobile ต้องเขียนฟังชั่นแยกให้ออกว่าอันไหน email อันไหน mobile
 Response
-201 { accessToken: String }  // ล็อคอินเสร็จแล้วให้ทำอะไรต่อ / อัตโนมัติ / เด้งไป OTP 
-400 { message: String }
+201 { accessToken: String, user: {id: Number, firstName: String} }  // ล็อคอินเสร็จแล้วให้ทำอะไรต่อ / อัตโนมัติ / เด้งไป OTP 
+400 { message: String, emailExist: true }
 500 { message: String }
 
 LOGIN
@@ -22,3 +22,14 @@ Response
 200 { user: { id: Number, firstName: String } }
 401 { message: String }
 500 { message: String }
+
+
+UPDATE PROFILE / COVER IMAGE
+PATCH /user
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+BODY profileImage?, coverImage?       *มีอย่างใดอย่างหนึ่ง มีพร้อมกันไม่ได้
+Response
+200 { message : String }
+400 { message : String }
+401 { message : String }
+500 { message : String }

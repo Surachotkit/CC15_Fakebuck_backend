@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
   },
   // ชื่อไฟล์ date.now  อัพเดทเรื่อยๆ เวลา ณ ปัจจุบัน
   filename: (req, file, cb) => {
-    console.log(file)
+    // console.log(file)
     const split = file.originalname.split('.')
     cb(null, '' + Date.now()+ Math.round(Math.random() * 1000000) + '.' + split[split.length - 1]);
   },

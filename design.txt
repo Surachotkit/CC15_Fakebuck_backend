@@ -29,7 +29,16 @@ PATCH /user
 HEADER AUTHORIZATION Bearer ACCESS_TOKEN
 BODY profileImage?, coverImage?       *มีอย่างใดอย่างหนึ่ง มีพร้อมกันไม่ได้
 Response
-200 { message : String }
+200 { profileImage?: String, coverImage?: String }
 400 { message : String }
+401 { message : String }
+500 { message : String }
+
+
+GET USER PROFILE BY id
+GET /user/:userId
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+Response
+200 { user: { id: Number, firstName: String, lastName: String, .... } }
 401 { message : String }
 500 { message : String }

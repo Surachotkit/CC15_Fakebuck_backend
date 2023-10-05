@@ -5,3 +5,9 @@ const checkUserIdSchema = Joi.object({
 })
 
 exports.checkUserIdSchema = checkUserIdSchema
+
+const checkReceiverIdSchema = Joi.object({
+    receiverId: Joi.number().integer().positive().required()
+})
+
+exports.checkReceiverIdSchema = checkReceiverIdSchema

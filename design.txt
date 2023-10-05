@@ -42,3 +42,32 @@ Response
 200 { user: { id: Number, firstName: String, lastName: String, .... } }
 401 { message : String }
 500 { message : String }
+
+----------------------------------------------------------------------
+
+REQUEST FRIEND
+POST /friend/:receiverId
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+Response
+200 { message : String }
+400 { message : String }
+401 { message : String }
+500 { message : String }
+
+DELETE FRIEND
+DELETE /friend/:targetUserId
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+Response
+200 { message : String }
+400 { message : String }
+401 { message : String }
+500 { message : String }
+
+ACCEPT FRIEND 
+PATCH / friend/:requesterId
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+Response
+200 { message : String }
+400 { message : String }
+401 { message : String }
+500 { message : String }

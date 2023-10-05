@@ -1,6 +1,7 @@
 const { STATUS_PENDING, STATUS_ACCEPTED } = require("../config/constants");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
+const { checkFriendIdSchema } = require("../validators/user-validator");
 const { checkRequesterIdSchema } = require("../validators/user-validator");
 const { checkReceiverIdSchema } = require("../validators/user-validator");
 
@@ -90,3 +91,102 @@ exports.acceptRequest = async (req, res, next) => {
     next(err);
   }
 };
+
+
+exports.rejectRequest = async(req,res,next) => {
+    try{
+        const {value,error} = checkRequesterIdSchema.validate(req.params)
+        if(error){
+            return next(error)
+        }
+        // del เหมือนกัน แต่ logic ตรงนี้ไม่เหมือนกัน
+        const existRelationship = await prisma.friend.findFirst({
+            where:{
+                receiverId: req.user.id,
+                requesterId: value.requesterId,
+                status: STATUS_PENDING
+            }
+        })
+
+        if(!existRelationship) {
+            return next(createError('relationship does not exist', 400))
+        }
+        // ลบ id ที่เจอ
+        await prisma.friend.delete({
+            where:{
+                id: existRelationship.id
+            }
+        })
+        res.status(200).json({message: 'rejected'})
+    }catch(err){
+        next(err)
+    }
+
+
+}
+
+
+exports.cancelRequest = async (req,res,next) => {
+    try{
+        const {value, error} = checkReceiverIdSchema.validate(req.params)
+        if(error){
+            return next(error)
+        }
+        const existRelationship = await prisma.friend.findFirst({
+            where:{
+                requesterId: req.user.id,
+                receiverId: value.receiverId,
+                status: STATUS_PENDING
+            }
+        })
+
+        if(!existRelationship) {
+            return next(createError('relationship does not exist', 400))
+        }
+        await prisma.friend.delete({
+            where:{
+                id: existRelationship.id
+            }
+        })
+
+        res.status(200).json({message: 'success cancellation'})
+    }catch(err){
+        next(err)
+    }
+}
+
+
+
+exports.unfriend = async (req,res,next) => {
+    try{
+        const { value, error} = checkFriendIdSchema.validate(req.params)
+        if(error){
+            return next(error)
+        }
+
+        const existRelationship = await prisma.friend.findFirst({
+            where:{
+                // 1 ขอ 2  หรือ 2 ขอ 1
+                OR:[
+                    { requesterId: req.user.id, receiverId: value.friendId },
+                    { requesterId: value.friendId, receiverId: req.user.id }
+                ],
+                status: STATUS_ACCEPTED
+            }
+        })
+
+        if(!existRelationship){
+            return next(createError('relationship does not exist', 400))
+        }
+
+        await prisma.friend.delete({
+            where:{
+                id: existRelationship.id
+            }
+        })
+
+        res.status(200).json({message: 'friendship terminated'})
+    }catch(err){
+        next(err)
+    }
+}

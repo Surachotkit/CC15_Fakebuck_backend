@@ -33,13 +33,15 @@ Response
 400 { message : String }
 401 { message : String }
 500 { message : String }
-
+--------------------------------------------------------------------
 
 GET USER PROFILE BY id
 GET /user/:userId
 HEADER AUTHORIZATION Bearer ACCESS_TOKEN
 Response
-200 { user: { id: Number, firstName: String, lastName: String, .... } }
+200 { user: { id: Number, firstName: String...} }
+    status: String,
+    friend: [ {id: Number, firstName: String, ...}]
 401 { message : String }
 500 { message : String }
 
@@ -54,8 +56,9 @@ Response
 401 { message : String }
 500 { message : String }
 
-DELETE FRIEND
-DELETE /friend/:targetUserId
+----------------------------------------------------------------------
+REJECT FRIEND
+DELETE /friend/:requestId/reject
 HEADER AUTHORIZATION Bearer ACCESS_TOKEN
 Response
 200 { message : String }
@@ -63,6 +66,25 @@ Response
 401 { message : String }
 500 { message : String }
 
+CANCEL REQUEST
+DELETE /friend/:requestId/cancel
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+Response
+200 { message : String }
+400 { message : String }
+401 { message : String }
+500 { message : String }
+
+UNFRIEND
+DELETE /friend/:friendId/unfriend
+HEADER AUTHORIZATION Bearer ACCESS_TOKEN
+Response
+200 { message : String }
+400 { message : String }
+401 { message : String }
+500 { message : String }
+
+--------------------------------------------------------------------
 ACCEPT FRIEND 
 PATCH / friend/:requesterId
 HEADER AUTHORIZATION Bearer ACCESS_TOKEN

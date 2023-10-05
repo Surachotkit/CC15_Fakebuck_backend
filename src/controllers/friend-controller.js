@@ -1,6 +1,7 @@
-const { STATUS_PENDING } = require("../config/constants");
+const { STATUS_PENDING, STATUS_ACCEPTED } = require("../config/constants");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
+const { checkRequesterIdSchema } = require("../validators/user-validator");
 const { checkReceiverIdSchema } = require("../validators/user-validator");
 
 exports.requestFriend = async (req, res, next) => {
@@ -43,14 +44,48 @@ exports.requestFriend = async (req, res, next) => {
       return next(createError("user already has relationship", 400));
     }
     await prisma.friend.create({
-        data: {
-            requesterId: req.user.id,
-            receiverId: value.receiverId,
-            status: STATUS_PENDING
-        }
-    })
+      data: {
+        requesterId: req.user.id,
+        receiverId: value.receiverId,
+        status: STATUS_PENDING,
+      },
+    });
 
     res.status(201).json({ message: "request has been send" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// 1 accpect 4 --> receiver 4
+exports.acceptRequest = async (req, res, next) => {
+  try {
+    const { value, error } = checkRequesterIdSchema.validate(req.params);
+    if (error) {
+      return next(error);
+    }
+    const existRelationship = await prisma.friend.findFirst({
+      where: {
+        requesterId: value.requesterId,
+        receiverId: req.user.id,
+        status: STATUS_PENDING,
+      },
+    });
+    // ไม่เคยมีคำร้องขอ
+    if (!existRelationship) {
+      return next(createError("relationship does not exist", 400));
+    }
+    // update
+    await prisma.friend.update({
+      data: {
+        status: STATUS_ACCEPTED,
+      },
+      where: {
+        id: existRelationship.id,
+      },
+    });
+
+    res.status(200).json({message: 'accepted'})
   } catch (err) {
     next(err);
   }
